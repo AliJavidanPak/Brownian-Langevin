@@ -1,0 +1,678 @@
+\documentclass[11pt,a4paper]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amssymb,amsfonts}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage[margin=1in]{geometry}
+\usepackage{enumitem}
+
+\title{Brownian Motion and Langevin Dynamics}
+\author{Radmehr Fathi \& Ali Javidan Pak}
+\date{\today}
+
+\begin{document}
+	
+	\maketitle
+	\tableofcontents
+	\newpage
+	
+	%------------------------------------------------------------------------------
+	\section{The Historical Problem}
+	%------------------------------------------------------------------------------
+	
+	\subsection{Robert Brown's Observation (1827)}
+	
+	In 1827, the Scottish botanist Robert Brown was examining pollen grains suspended in water under a microscope. He noticed that the grains performed a continuous, irregular, zigzagging motion. At first, he thought this might be a sign of life---some vital force animating the pollen. But he quickly ruled this out by observing the same behavior in:
+	\begin{itemize}
+		\item Dead pollen grains.
+		\item Inorganic particles like dust, soot, and even tiny fragments of the Sphinx.
+	\end{itemize}
+	The motion was universal, not biological.
+	
+	Brown carefully documented the phenomenon but could not explain it. The mystery persisted for nearly 80 years.
+	
+	\subsection{The Puzzle}
+	
+	Why do tiny particles in a fluid jitter incessantly? If the fluid were a continuous medium, the particle should sit still---all forces from all directions would cancel on average. The motion suggested that the fluid itself was not continuous but composed of discrete, moving molecules that collide with the particle randomly.
+	
+	This was a deep clue about the atomic nature of matter, at a time when the existence of atoms was still debated.
+	
+	%------------------------------------------------------------------------------
+	\section{Einstein's Theory (1905)}
+	%------------------------------------------------------------------------------
+	
+	\subsection{Einstein's Question}
+	
+	In his annus mirabilis of 1905, Albert Einstein wrote a paper titled ``On the Motion of Small Particles Suspended in a Stationary Liquid, as Required by the Molecular Kinetic Theory of Heat.'' He asked:
+	
+	\begin{quote}
+		Can we predict the observable motion of a Brownian particle from the assumption that the fluid is made of molecules in thermal motion?
+	\end{quote}
+	
+	He was not trying to explain Brownian motion per se---he was trying to find a macroscopic, observable consequence of the atomic hypothesis that could be tested experimentally.
+	
+	\subsection{The Physical Model}
+	
+	Einstein considered a dilute suspension of small particles (like pollen grains) in a liquid. He made several key assumptions:
+	
+	\begin{enumerate}[label=\arabic*.]
+		\item \textbf{The particles are independent:} The suspension is so dilute that particles don't interact with each other.
+		\item \textbf{The particles behave like an ideal gas:} They exert an osmotic pressure, just like gas molecules in a container. The pressure at concentration $n$ (number per unit volume) is:
+		\begin{equation}
+			P = n k_B T
+		\end{equation}
+		where $k_B$ is Boltzmann's constant and $T$ is the absolute temperature. This is van 't Hoff's law.
+		\item \textbf{The particles experience Stokes drag:} When a spherical particle of radius $r$ moves at velocity $v$ through a fluid with viscosity $\eta$, it feels a drag force:
+		\begin{equation}
+			F_{\text{drag}} = -6\pi \eta r v
+		\end{equation}
+		This is Stokes' law, valid for low Reynolds number flow.
+		\item \textbf{The motion is a random walk:} The particle's trajectory is the result of many independent, random molecular collisions. In 1D, we can model it as steps of equal size but random direction.
+	\end{enumerate}
+	
+	\subsection{The Random Walk Model}
+	
+	Consider a 1D model. Time is divided into small intervals of length $\tau$. In each interval, the particle moves a distance $\delta$ to the left or right with equal probability $1/2$. All steps are independent.
+	
+	Let $X_n$ be the position after $n$ steps. Starting at $X_0 = 0$:
+	\begin{equation}
+		X_n = \sum_{i=1}^{n} \Delta x_i
+	\end{equation}
+	where $\Delta x_i = \pm \delta$ with equal probability.
+	
+	\textbf{Statistical properties of a single step:}
+	\begin{align}
+		E[\Delta x_i] &= \frac{1}{2}(+\delta) + \frac{1}{2}(-\delta) = 0 \\
+		E[(\Delta x_i)^2] &= \frac{1}{2}(+\delta)^2 + \frac{1}{2}(-\delta)^2 = \delta^2 \\
+		\operatorname{Var}(\Delta x_i) &= \delta^2
+	\end{align}
+	
+	\textbf{Statistical properties after $n$ steps:}
+	Since steps are independent:
+	\begin{align}
+		E[X_n] &= \sum_{i=1}^{n} E[\Delta x_i] = 0 \\
+		\operatorname{Var}(X_n) &= \sum_{i=1}^{n} \operatorname{Var}(\Delta x_i) = n \delta^2
+	\end{align}
+	
+	The mean displacement is zero (no preferred direction). The variance grows linearly with the number of steps. This linear growth is the defining characteristic of diffusion.
+	
+	\textbf{In physical time:}
+	The physical time elapsed is $t = n\tau$. So:
+	\begin{equation}
+		\operatorname{Var}(X(t)) = \frac{t}{\tau} \delta^2
+	\end{equation}
+	
+	Define the \textbf{diffusion coefficient}:
+	\begin{equation}
+		D \equiv \frac{\delta^2}{2\tau}
+	\end{equation}
+	
+	Then:
+	\begin{equation}
+		\operatorname{Var}(X(t)) = 2Dt
+	\end{equation}
+	
+	This is the fundamental law of diffusion: the mean squared displacement grows linearly in time.
+	
+	\subsection{The Continuum Limit}
+	
+	We want a description valid on macroscopic timescales, where $\tau$ is tiny and the number of steps is enormous. Take the limit $\delta \to 0$, $\tau \to 0$ while keeping $D = \delta^2 / (2\tau)$ fixed.
+	
+	By the \textbf{Central Limit Theorem}, a sum of many i.i.d.\ random variables with finite variance approaches a Gaussian distribution. After many steps, $X_n$ is approximately Gaussian:
+	\begin{equation}
+		P(X_n = x) \approx \frac{1}{\sqrt{2\pi n \delta^2}} e^{-x^2 / (2n\delta^2)}
+	\end{equation}
+	
+	In terms of time $t = n\tau$:
+	\begin{equation}
+		p(x,t) \approx \frac{1}{\sqrt{4\pi D t}} e^{-x^2 / (4Dt)}
+	\end{equation}
+	
+	In the limit, this becomes exact. The probability density $p(x,t)$ for finding the particle at position $x$ at time $t$ is a Gaussian with mean $0$ and variance $2Dt$.
+	
+	\subsection{The Diffusion Equation}
+	
+	We can derive a partial differential equation for $p(x,t)$.
+	
+	Start from the discrete Chapman-Kolmogorov equation:
+	\begin{equation}
+		p(x, t+\tau) = \frac{1}{2} p(x-\delta, t) + \frac{1}{2} p(x+\delta, t)
+	\end{equation}
+	
+	This says: to be at $x$ at time $t+\tau$, you must have been at $x-\delta$ or $x+\delta$ at time $t$ and taken a step toward $x$.
+	
+	Now Taylor expand both sides.
+	
+	\textbf{Left side (expand in time):}
+	\begin{equation}
+		p(x, t+\tau) = p(x,t) + \tau \frac{\partial p}{\partial t} + \frac{\tau^2}{2} \frac{\partial^2 p}{\partial t^2} + \cdots
+	\end{equation}
+	
+	\textbf{Right side (expand in space):}
+	First term:
+	\begin{equation}
+		p(x-\delta, t) = p(x,t) - \delta \frac{\partial p}{\partial x} + \frac{\delta^2}{2} \frac{\partial^2 p}{\partial x^2} - \frac{\delta^3}{6} \frac{\partial^3 p}{\partial x^3} + \frac{\delta^4}{24} \frac{\partial^4 p}{\partial x^4} - \cdots
+	\end{equation}
+	
+	Second term:
+	\begin{equation}
+		p(x+\delta, t) = p(x,t) + \delta \frac{\partial p}{\partial x} + \frac{\delta^2}{2} \frac{\partial^2 p}{\partial x^2} + \frac{\delta^3}{6} \frac{\partial^3 p}{\partial x^3} + \frac{\delta^4}{24} \frac{\partial^4 p}{\partial x^4} + \cdots
+	\end{equation}
+	
+	\textbf{Average them:}
+	\begin{equation}
+		\frac{1}{2}\left(p(x-\delta,t) + p(x+\delta,t)\right) = p(x,t) + \frac{\delta^2}{2} \frac{\partial^2 p}{\partial x^2} + \frac{\delta^4}{24} \frac{\partial^4 p}{\partial x^4} + \cdots
+	\end{equation}
+	
+	All odd derivatives cancel because of symmetry.
+	
+	\textbf{Equate left and right:}
+	\begin{equation}
+		p + \tau \frac{\partial p}{\partial t} + \cdots = p + \frac{\delta^2}{2} \frac{\partial^2 p}{\partial x^2} + \cdots
+	\end{equation}
+	
+	Cancel $p$ and divide by $\tau$:
+	\begin{equation}
+		\frac{\partial p}{\partial t} = \frac{\delta^2}{2\tau} \frac{\partial^2 p}{\partial x^2} + \mathcal{O}(\tau) + \mathcal{O}(\delta^4/\tau)
+	\end{equation}
+	
+	Take the limit $\delta \to 0$, $\tau \to 0$ with $D = \delta^2 / (2\tau)$ fixed. Higher-order terms vanish:
+	\begin{equation}
+		\boxed{\frac{\partial p}{\partial t} = D \frac{\partial^2 p}{\partial x^2}}
+	\end{equation}
+	
+	This is the \textbf{diffusion equation} (also the heat equation). It describes how probability ``spreads out'' over time.
+	
+	\textbf{Initial condition:} The particle starts at $x=0$: $p(x,0) = \delta(x)$ (Dirac delta function).
+	
+	\textbf{Solution (fundamental solution):}
+	\begin{equation}
+		p(x,t) = \frac{1}{\sqrt{4\pi D t}} e^{-x^2 / (4Dt)}
+	\end{equation}
+	
+	You can verify this solves the equation by direct substitution.
+	
+	\textbf{Key properties of the solution:}
+	\begin{itemize}
+		\item Mean: $E[X(t)] = 0$
+		\item Variance: $E[X(t)^2] = 2Dt$
+		\item The distribution spreads like $\sqrt{t}$ (the width is $\sim \sqrt{2Dt}$).
+		\item It's self-similar: $p(x,t) = t^{-1/2} f(x / \sqrt{t})$.
+	\end{itemize}
+	
+	\subsection{Einstein's Derivation of the Stokes-Einstein Relation}
+	
+	This was the most revolutionary part. Einstein connected the diffusion coefficient $D$ to molecular quantities.
+	
+	Consider the Brownian particles suspended in fluid. In equilibrium under gravity (or any external potential), there are two competing fluxes:
+	
+	\textbf{1. Diffusive flux (Fick's law):}
+	When the concentration $n(x)$ is non-uniform, particles diffuse from high to low concentration:
+	\begin{equation}
+		J_{\text{diff}} = -D \frac{\partial n}{\partial x}
+	\end{equation}
+	
+	\textbf{2. Drift flux from external force:}
+	If each particle experiences an external force $F$ (e.g., gravity), it reaches a terminal velocity where the force balances Stokes drag:
+	\begin{equation}
+		F - 6\pi \eta r v = 0 \implies v = \frac{F}{6\pi \eta r}
+	\end{equation}
+	
+	The drift flux is:
+	\begin{equation}
+		J_{\text{drift}} = n v = \frac{n F}{6\pi \eta r}
+	\end{equation}
+	
+	\textbf{In equilibrium}, the total flux must be zero (detailed balance):
+	\begin{align}
+		J_{\text{diff}} + J_{\text{drift}} &= 0 \\
+		-D \frac{\partial n}{\partial x} + \frac{n F}{6\pi \eta r} &= 0
+	\end{align}
+	
+	Now, what is the external force? Einstein considered the \textbf{osmotic pressure} gradient. The particles behave as an ideal gas: $P = n k_B T$. The force per particle from the pressure gradient is:
+	\begin{equation}
+		F = -\frac{1}{n} \frac{\partial P}{\partial x} = -\frac{k_B T}{n} \frac{\partial n}{\partial x}
+	\end{equation}
+	
+	Substitute into the equilibrium condition:
+	\begin{align}
+		-D \frac{\partial n}{\partial x} + \frac{n}{6\pi \eta r} \left(-\frac{k_B T}{n} \frac{\partial n}{\partial x}\right) &= 0 \\
+		-D \frac{\partial n}{\partial x} - \frac{k_B T}{6\pi \eta r} \frac{\partial n}{\partial x} &= 0
+	\end{align}
+	
+	\begin{equation}
+		\boxed{D = \frac{k_B T}{6\pi \eta r}}
+	\end{equation}
+	
+	This is the \textbf{Stokes-Einstein relation}.
+	
+	\textbf{Physical significance:}
+	\begin{itemize}
+		\item $D$ is measurable: track a particle, compute $\langle x^2 \rangle / (2t)$.
+		\item $k_B = R / N_A$ contains Avogadro's number $N_A$.
+		\item $\eta$ and $r$ are macroscopic quantities.
+		\item $T$ is measured with a thermometer.
+	\end{itemize}
+	
+	Thus, measuring $D$ gives $N_A$! This was a direct, quantitative test of the atomic hypothesis. Jean Perrin performed these experiments in 1908, measured $N_A \approx 6\text{--}7 \times 10^{23}$, and won the 1926 Nobel Prize.
+	
+	%------------------------------------------------------------------------------
+	\section{The Langevin Equation}
+	%------------------------------------------------------------------------------
+	
+	\subsection{The Limitation of Einstein's Approach}
+	
+	Einstein's theory describes the \textbf{position} of a Brownian particle but not its \textbf{velocity}. It assumes the particle has no inertia---that it instantly responds to forces (the overdamped limit). For a massive particle, we need to include acceleration.
+	
+	Also, Einstein's derivation used thermodynamic equilibrium arguments. What about the dynamics? How does the particle actually move from moment to moment?
+	
+	\subsection{Langevin's Formulation (1908)}
+	
+	Paul Langevin, a French physicist, wrote down Newton's second law for the Brownian particle, including the random force explicitly:
+	
+	\begin{equation}
+		m \frac{dv}{dt} = F_{\text{drag}} + F_{\text{random}}
+	\end{equation}
+	
+	\textbf{The drag force:} The viscous drag from Stokes' law:
+	\begin{equation}
+		F_{\text{drag}} = -\gamma v, \quad \gamma = 6\pi \eta r
+	\end{equation}
+	
+	\textbf{The random force:} The cumulative effect of molecular collisions. Langevin assumed:
+	\begin{enumerate}[label=(\arabic*)]
+		\item Zero mean: $\langle \xi(t) \rangle = 0$ (no systematic push in any direction).
+		\item No correlation in time: $\langle \xi(t) \xi(t') \rangle = \Gamma \delta(t - t')$ (white noise).
+	\end{enumerate}
+	
+	Why white noise? The molecular collisions occur on timescales $\tau_c \sim 10^{-12}$ seconds (mean free time between collisions). We observe the particle on timescales of microseconds to seconds. On these macroscopic timescales, the autocorrelation of the random force looks like a delta function---the force at one instant is completely uncorrelated with the force at any other instant.
+	
+	The Langevin equation:
+	\begin{equation}
+		m \frac{dv}{dt} = -\gamma v + \xi(t)
+	\end{equation}
+	
+	This is a \textbf{stochastic differential equation} (SDE). The term $\xi(t)$ is random, making $v(t)$ a random process.
+	
+	\subsection{Solving the Langevin Equation}
+	
+	Divide by $m$:
+	\begin{equation}
+		\frac{dv}{dt} = -\frac{\gamma}{m} v + \frac{1}{m} \xi(t)
+	\end{equation}
+	
+	Let $\lambda = \gamma / m$ (the relaxation rate). Then:
+	\begin{equation}
+		\frac{dv}{dt} = -\lambda v + \frac{1}{m} \xi(t)
+	\end{equation}
+	
+	This is a linear first-order differential equation with a random forcing term. Solve it like an ODE using an integrating factor.
+	
+	Multiply both sides by $e^{\lambda t}$:
+	\begin{equation}
+		e^{\lambda t} \frac{dv}{dt} + \lambda e^{\lambda t} v = \frac{1}{m} e^{\lambda t} \xi(t)
+	\end{equation}
+	
+	The left side is the derivative of $v e^{\lambda t}$:
+	\begin{equation}
+		\frac{d}{dt}\left(v e^{\lambda t}\right) = \frac{1}{m} e^{\lambda t} \xi(t)
+	\end{equation}
+	
+	Integrate from $0$ to $t$:
+	\begin{equation}
+		v(t) e^{\lambda t} - v(0) = \frac{1}{m} \int_0^t e^{\lambda s} \xi(s) \, ds
+	\end{equation}
+	
+	\begin{equation}
+		\boxed{v(t) = v_0 e^{-\lambda t} + \frac{1}{m} \int_0^t e^{-\lambda(t-s)} \xi(s) \, ds}
+	\end{equation}
+	
+	This is the formal solution. The velocity at time $t$ consists of:
+	\begin{itemize}
+		\item A \textbf{deterministic part}: the initial velocity $v_0$ decaying exponentially with time constant $1/\lambda = m/\gamma$.
+		\item A \textbf{stochastic part}: a weighted integral of the past random forces. Recent forces ($s$ close to $t$) matter more because of the exponential weighting.
+	\end{itemize}
+	
+	\subsection{Statistical Properties of the Velocity}
+	
+	\textbf{Mean velocity:}
+	
+	Take the expectation of the solution:
+	\begin{equation}
+		E[v(t)] = v_0 e^{-\lambda t} + \frac{1}{m} \int_0^t e^{-\lambda(t-s)} E[\xi(s)] \, ds
+	\end{equation}
+	
+	Since $E[\xi(s)] = 0$, the integral vanishes:
+	\begin{equation}
+		E[v(t)] = v_0 e^{-\lambda t}
+	\end{equation}
+	
+	The mean velocity decays exponentially to zero. The particle ``forgets'' its initial velocity on the timescale $\tau_R = m/\gamma$ (the \textbf{relaxation time}).
+	
+	\textbf{Variance of velocity:}
+	
+	The variance is $E[v(t)^2] - (E[v(t)])^2$. For simplicity, assume $v_0 = 0$ (or work with the deviation from the mean). Then $E[v(t)] = 0$, and:
+	\begin{equation}
+		\operatorname{Var}(v(t)) = E[v(t)^2]
+	\end{equation}
+	
+	From the solution:
+	\begin{equation}
+		v(t) = \frac{1}{m} \int_0^t e^{-\lambda(t-s)} \xi(s) \, ds
+	\end{equation}
+	
+	Square it:
+	\begin{equation}
+		v(t)^2 = \frac{1}{m^2} \int_0^t \int_0^t e^{-\lambda(t-s)} e^{-\lambda(t-u)} \xi(s) \xi(u) \, ds \, du
+	\end{equation}
+	
+	Take expectation:
+	\begin{equation}
+		E[v(t)^2] = \frac{1}{m^2} \int_0^t \int_0^t e^{-\lambda(t-s)} e^{-\lambda(t-u)} E[\xi(s)\xi(u)] \, ds \, du
+	\end{equation}
+	
+	Now use the white noise property: $E[\xi(s)\xi(u)] = \Gamma \delta(s-u)$.
+	
+	The delta function collapses the double integral:
+	\begin{equation}
+		\int_0^t \int_0^t f(s,u) \delta(s-u) \, ds \, du = \int_0^t f(s,s) \, ds
+	\end{equation}
+	
+	So:
+	\begin{equation}
+		E[v(t)^2] = \frac{\Gamma}{m^2} \int_0^t e^{-2\lambda(t-s)} \, ds
+	\end{equation}
+	
+	Compute the integral:
+	\begin{align}
+		\int_0^t e^{-2\lambda(t-s)} \, ds &= e^{-2\lambda t} \int_0^t e^{2\lambda s} \, ds \\
+		&= e^{-2\lambda t} \left[ \frac{e^{2\lambda s}}{2\lambda} \right]_0^t \\
+		&= e^{-2\lambda t} \frac{e^{2\lambda t} - 1}{2\lambda} \\
+		&= \frac{1 - e^{-2\lambda t}}{2\lambda}
+	\end{align}
+	
+	Thus:
+	\begin{equation}
+		\operatorname{Var}(v(t)) = \frac{\Gamma}{m^2} \cdot \frac{1 - e^{-2\lambda t}}{2\lambda} = \frac{\Gamma}{2m\gamma} \left(1 - e^{-2\lambda t}\right)
+	\end{equation}
+	
+	\textbf{Steady state ($t \to \infty$):}
+	As $t \to \infty$, $e^{-2\lambda t} \to 0$:
+	\begin{equation}
+		\operatorname{Var}(v)_{\text{eq}} = \frac{\Gamma}{2m\gamma}
+	\end{equation}
+	
+	The velocity distribution approaches a Gaussian (it's a linear functional of the Gaussian white noise) with mean 0 and variance $\Gamma / (2m\gamma)$.
+	
+	\subsection{The Fluctuation-Dissipation Theorem}
+	
+	Here is the crucial physics. The Brownian particle is immersed in a fluid at temperature $T$. When it reaches equilibrium, its velocity must follow the \textbf{Maxwell-Boltzmann distribution} from equilibrium statistical mechanics:
+	
+	\begin{equation}
+		p_{\text{eq}}(v) = \sqrt{\frac{m}{2\pi k_B T}} \exp\left(-\frac{m v^2}{2 k_B T}\right)
+	\end{equation}
+	
+	This is a Gaussian with variance:
+	\begin{equation}
+		\operatorname{Var}(v)_{\text{MB}} = \frac{k_B T}{m}
+	\end{equation}
+	
+	Equating the two expressions for the equilibrium variance:
+	\begin{equation}
+		\frac{\Gamma}{2m\gamma} = \frac{k_B T}{m}
+	\end{equation}
+	
+	Cancel $m$:
+	\begin{equation}
+		\boxed{\Gamma = 2\gamma k_B T}
+	\end{equation}
+	
+	This is the \textbf{Fluctuation-Dissipation Theorem} (FDT) of the second kind.
+	
+	\textbf{The profound meaning:}
+	
+	\begin{itemize}
+		\item \textbf{$\Gamma$} measures the strength of the fluctuating (random) force. It quantifies how violently the molecules kick the particle.
+		\item \textbf{$\gamma$} measures the strength of the dissipative (drag) force. It quantifies how quickly the particle loses energy to the fluid.
+	\end{itemize}
+	
+	They are \textbf{proportional}: $\Gamma = 2\gamma k_B T$.
+	
+	The random kicks and the drag are not independent phenomena---they are two manifestations of the same underlying interaction: the coupling between the particle and the fluid molecules. The FDT guarantees that the particle comes to thermal equilibrium at the correct temperature. Without this precise relationship, the particle would either heat up indefinitely or cool to absolute zero---both violating the second law of thermodynamics.
+	
+	\subsection{The Velocity Autocorrelation Function}
+	
+	Another important characterization of the dynamics is the velocity autocorrelation function:
+	\begin{equation}
+		C(t) = \langle v(t) v(0) \rangle - \langle v(t) \rangle \langle v(0) \rangle
+	\end{equation}
+	
+	For a stationary process (in equilibrium) with $\langle v \rangle = 0$:
+	\begin{equation}
+		C(t) = E[v(t) v(0)]
+	\end{equation}
+	
+	From the solution for $v(t)$:
+	\begin{equation}
+		v(t) = v_0 e^{-\lambda t} + \frac{1}{m} \int_0^t e^{-\lambda(t-s)} \xi(s) \, ds
+	\end{equation}
+	
+	Multiply by $v(0) = v_0$ and take expectation. The random force $\xi(s)$ for $s > 0$ is independent of $v(0)$ (causality---future noise doesn't affect the past). So:
+	\begin{equation}
+		C(t) = E[v_0^2] e^{-\lambda t} + \frac{1}{m} \int_0^t e^{-\lambda(t-s)} \underbrace{E[\xi(s) v_0]}_{=0} \, ds
+	\end{equation}
+	
+	In equilibrium, $E[v_0^2] = k_B T / m$. Thus:
+	\begin{equation}
+		C(t) = \frac{k_B T}{m} e^{-\lambda t}
+	\end{equation}
+	
+	The velocity autocorrelation decays exponentially with time constant $\tau_R = 1/\lambda = m/\gamma$. This exponential decay is the defining characteristic of the Ornstein-Uhlenbeck process---it's the only stationary Gaussian Markov process with an exponential autocorrelation.
+	
+	%------------------------------------------------------------------------------
+	\section{From Velocity to Position}
+	%------------------------------------------------------------------------------
+	
+	\subsection{Integrating the Velocity}
+	
+	The position is the integral of velocity:
+	\begin{equation}
+		x(t) = x_0 + \int_0^t v(s) \, ds
+	\end{equation}
+	
+	Substitute the solution for $v(t)$:
+	
+	\begin{equation}
+		x(t) = x_0 + \int_0^t \left[v_0 e^{-\lambda s} + \frac{1}{m} \int_0^s e^{-\lambda(s-u)} \xi(u) \, du\right] ds
+	\end{equation}
+	
+	\textbf{First term (initial velocity contribution):}
+	\begin{equation}
+		\int_0^t v_0 e^{-\lambda s} \, ds = v_0 \left[\frac{-e^{-\lambda s}}{\lambda}\right]_0^t = \frac{v_0}{\lambda} \left(1 - e^{-\lambda t}\right) = \frac{v_0 m}{\gamma} \left(1 - e^{-\lambda t}\right)
+	\end{equation}
+	
+	\textbf{Second term (random force contribution):}
+	\begin{equation}
+		\frac{1}{m} \int_0^t \int_0^s e^{-\lambda(s-u)} \xi(u) \, du \, ds
+	\end{equation}
+	
+	Swap the order of integration (stochastic Fubini theorem). The region of integration is $0 \leq u \leq s \leq t$:
+	\begin{align}
+		&= \frac{1}{m} \int_0^t \left( \int_u^t e^{-\lambda(s-u)} ds \right) \xi(u) \, du \\
+		&= \frac{1}{m} \int_0^t \left[ \frac{-e^{-\lambda(s-u)}}{\lambda} \right]_{s=u}^{s=t} \xi(u) \, du \\
+		&= \frac{1}{m\lambda} \int_0^t \left(1 - e^{-\lambda(t-u)}\right) \xi(u) \, du \\
+		&= \frac{1}{\gamma} \int_0^t \left(1 - e^{-\lambda(t-u)}\right) \xi(u) \, du
+	\end{align}
+	
+	\textbf{Full solution for position:}
+	\begin{equation}
+		x(t) = x_0 + \frac{v_0 m}{\gamma}\left(1 - e^{-\lambda t}\right) + \frac{1}{\gamma} \int_0^t \left(1 - e^{-\lambda(t-s)}\right) \xi(s) \, ds
+	\end{equation}
+	
+	\subsection{Mean Squared Displacement}
+	
+	Assume $x_0 = 0$ and $v_0 = 0$ for simplicity (or work in equilibrium where these are random with mean zero). Then $E[x(t)] = 0$.
+	
+	The mean squared displacement is:
+	\begin{equation}
+		E[x(t)^2] = \frac{1}{\gamma^2} E\left[ \left( \int_0^t (1 - e^{-\lambda(t-s)}) \xi(s) \, ds \right)^2 \right]
+	\end{equation}
+	
+	Use the white noise property $E[\xi(s)\xi(u)] = \Gamma \delta(s-u)$:
+	\begin{equation}
+		E[x(t)^2] = \frac{1}{\gamma^2} \int_0^t (1 - e^{-\lambda(t-s)})^2 \Gamma \, ds
+	\end{equation}
+	
+	Substitute $\Gamma = 2\gamma k_B T$:
+	\begin{equation}
+		E[x(t)^2] = \frac{2 k_B T}{\gamma} \int_0^t (1 - e^{-\lambda(t-s)})^2 \, ds
+	\end{equation}
+	
+	Change variable $u = \lambda(t-s)$, $du = -\lambda ds$, $s = 0 \to u = \lambda t$, $s = t \to u = 0$:
+	\begin{equation}
+		\int_0^t (1 - e^{-\lambda(t-s)})^2 \, ds = \frac{1}{\lambda} \int_0^{\lambda t} (1 - e^{-u})^2 \, du
+	\end{equation}
+	
+	Compute the integral:
+	\begin{align}
+		\int_0^{\lambda t} (1 - 2e^{-u} + e^{-2u}) \, du &= \left[ u + 2e^{-u} - \frac{1}{2}e^{-2u} \right]_0^{\lambda t} \\
+		&= \lambda t + 2e^{-\lambda t} - \frac{1}{2}e^{-2\lambda t} - \left(0 + 2 - \frac{1}{2}\right) \\
+		&= \lambda t + 2e^{-\lambda t} - \frac{1}{2}e^{-2\lambda t} - \frac{3}{2}
+	\end{align}
+	
+	The cleanest form (after algebraic simplification) is:
+	\begin{equation}
+		\boxed{E[x(t)^2] = \frac{2k_B T}{\gamma} \left[ t - \frac{m}{\gamma}\left(1 - e^{-(\gamma/m)t}\right) \right]}
+	\end{equation}
+	
+	\subsection{Limiting Behavior}
+	
+	\textbf{Short times ($t \ll m/\gamma$):}
+	
+	Taylor expand the exponential: $e^{-\lambda t} \approx 1 - \lambda t + \frac{1}{2}\lambda^2 t^2 - \frac{1}{6}\lambda^3 t^3$.
+	
+	Then:
+	\begin{equation}
+		1 - e^{-\lambda t} \approx \lambda t - \frac{1}{2}\lambda^2 t^2 + \frac{1}{6}\lambda^3 t^3
+	\end{equation}
+	
+	\begin{align}
+		E[x(t)^2] &\approx \frac{2k_B T}{\gamma} \left[ t - \frac{m}{\gamma}\left(\lambda t - \frac{1}{2}\lambda^2 t^2 + \frac{1}{6}\lambda^3 t^3\right) \right] \\
+		&= \frac{2k_B T}{\gamma} \left[ t - t + \frac{1}{2}\lambda t^2 - \frac{1}{6}\lambda^2 t^3 \right] \\
+		&= \frac{2k_B T}{\gamma} \left[ \frac{1}{2}\frac{\gamma}{m} t^2 - \frac{1}{6}\frac{\gamma^2}{m^2} t^3 \right] \\
+		&= \frac{k_B T}{m} t^2 - \frac{k_B T \gamma}{3 m^2} t^3
+	\end{align}
+	
+	To leading order:
+	\begin{equation}
+		E[x(t)^2] \approx \frac{k_B T}{m} t^2
+	\end{equation}
+	
+	This is \textbf{ballistic} motion: the particle moves with its initial thermal velocity $v_{\text{th}} \sim \sqrt{k_B T / m}$. The displacement grows linearly with time, and the MSD grows quadratically.
+	
+	\textbf{Long times ($t \gg m/\gamma$):}
+	
+	The exponential terms vanish. Then:
+	\begin{equation}
+		E[x(t)^2] \approx \frac{2k_B T}{\gamma} t = 2 D t
+	\end{equation}
+	
+	with $D = k_B T / \gamma = k_B T / (6\pi \eta r)$. This is exactly the diffusive regime from Einstein's theory! The MSD grows linearly with time.
+	
+	\subsection{The Crossover}
+	
+	There is a characteristic timescale:
+	\begin{equation}
+		\tau_R = \frac{m}{\gamma}
+	\end{equation}
+	
+	\begin{itemize}
+		\item For $t \ll \tau_R$: The particle remembers its initial velocity. Motion is ballistic. MSD $\propto t^2$.
+		\item For $t \gg \tau_R$: The particle has forgotten its initial velocity due to friction. Motion is diffusive. MSD $\propto t$.
+	\end{itemize}
+	
+	\textbf{How long is $\tau_R$?} For a 1-micron radius particle in water:
+	\begin{itemize}
+		\item $r = 10^{-6}$ m
+		\item $\eta \approx 10^{-3}$ Pa$\cdot$s (water at room temperature)
+		\item $\rho \approx 10^3$ kg/m$^3$ (density of water)
+		\item $m = \frac{4}{3}\pi r^3 \rho \approx 4 \times 10^{-15}$ kg
+		\item $\gamma = 6\pi \eta r \approx 2 \times 10^{-8}$ kg/s
+		\item $\tau_R = m/\gamma \approx 2 \times 10^{-7}$ s = 0.2 microseconds!
+	\end{itemize}
+	
+	The ballistic regime is incredibly short. For almost all practical observations, the motion is diffusive. This is why Einstein's overdamped theory works so well.
+	
+	%------------------------------------------------------------------------------
+	\section{Connection to Markov Processes and Stochastic Calculus}
+	%------------------------------------------------------------------------------
+	
+	\subsection{The Ornstein-Uhlenbeck Process}
+	
+	The Langevin equation for velocity defines the \textbf{Ornstein-Uhlenbeck (OU) process}---the continuous-time analog of an AR(1) process in discrete time. It has several special properties:
+	
+	\begin{enumerate}[label=\arabic*.]
+		\item \textbf{It's a Gaussian process:} Since it's a linear functional of Gaussian white noise, all finite-dimensional distributions are multivariate Gaussian.
+		\item \textbf{It's Markov:} The future depends only on the current velocity, not the history. The state is completely described by $v(t)$.
+		\item \textbf{It's stationary (in equilibrium):} The distribution at any time is the same Gaussian.
+		\item \textbf{It's the only stationary Gaussian Markov process} (Doob's theorem).
+		\item \textbf{It satisfies detailed balance and is time-reversible} in equilibrium.
+	\end{enumerate}
+	
+	\subsection{The Fokker-Planck Equation}
+	
+	The probability density $P(v,t)$ of the OU process satisfies the \textbf{Fokker-Planck equation} (Kolmogorov forward equation for continuous state spaces):
+	
+	\begin{equation}
+		\frac{\partial P}{\partial t} = \frac{\partial}{\partial v}\left( \lambda v P \right) + \frac{\Gamma}{2m^2} \frac{\partial^2 P}{\partial v^2}
+	\end{equation}
+	
+	\begin{itemize}
+		\item The first term (drift): probability flows toward $v=0$ at rate $\lambda v$.
+		\item The second term (diffusion): probability spreads out in velocity space due to the random force.
+	\end{itemize}
+	
+	The stationary solution ($\partial P / \partial t = 0$) is the Maxwell-Boltzmann distribution.
+	
+	\subsection{Connection to the Course Material}
+	
+	\begin{itemize}
+		\item The OU process is a \textbf{continuous-time Markov chain} with a continuous state space.
+		\item Its stationary distribution $\pi(v)$ is the Maxwell-Boltzmann distribution.
+		\item It satisfies \textbf{detailed balance} (reversibility in equilibrium).
+		\item The velocity autocorrelation decays exponentially, just like the $n$-step transition probabilities in a discrete chain converge to stationarity.
+		\item The Fokker-Planck equation is the \textbf{Kolmogorov forward equation} for this process.
+	\end{itemize}
+	
+	%------------------------------------------------------------------------------
+	\section{Summary of Key Results}
+	%------------------------------------------------------------------------------
+	
+	\begin{table}[h]
+		\centering
+		\begin{tabular}{@{}ll@{}}
+			\toprule
+			Quantity & Expression \\
+			\midrule
+			Diffusion coefficient & $D = \dfrac{k_B T}{6\pi \eta r}$ \\
+			Langevin equation & $m\dot{v} = -\gamma v + \xi(t)$ \\
+			Noise strength (FDT) & $\langle \xi(t)\xi(t') \rangle = 2\gamma k_B T \, \delta(t-t')$ \\
+			Velocity relaxation time & $\tau_R = m/\gamma$ \\
+			Velocity mean & $E[v(t)] = v_0 e^{-t/\tau_R}$ \\
+			Velocity variance (equilibrium) & $\operatorname{Var}(v) = k_B T / m$ \\
+			Velocity distribution (equilibrium) & Maxwell-Boltzmann \\
+			Velocity autocorrelation & $\langle v(t)v(0) \rangle = (k_B T/m) e^{-t/\tau_R}$ \\
+			MSD (ballistic, $t \ll \tau_R$) & $\langle x^2 \rangle \approx (k_B T/m) t^2$ \\
+			MSD (diffusive, $t \gg \tau_R$) & $\langle x^2 \rangle \sim 2Dt$ \\
+			\bottomrule
+		\end{tabular}
+		\caption{Key results from the theory of Brownian motion and Langevin dynamics.}
+	\end{table}
+	
+	%------------------------------------------------------------------------------
+	
+	This covers the full journey: from the historical puzzle of Brownian motion, through Einstein's random walk and the diffusion equation, to Langevin's dynamical equation, the Ornstein-Uhlenbeck process, and the fluctuation-dissipation theorem---tying it all back to the Markov chain theory.
+	
+\end{document}
